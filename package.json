@@ -1,5 +1,6 @@
 {
   "name": "odin-wheres-waldo",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -18,12 +19,9 @@
     "url": "https://github.com/JunDevl/odin-wheres-waldo/issues"
   },
   "homepage": "https://github.com/JunDevl/odin-wheres-waldo#readme",
-  "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/node": "^26.1.1",
-    "typescript": "^7.0.2"
-  },
-  "dependencies": {
-    "express": "^5.2.1"
-  }
+  "workspaces": [
+    "packages/*",
+    "server",
+    "client"
+  ]
 }

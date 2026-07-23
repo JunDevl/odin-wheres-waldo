@@ -1,0 +1,42 @@
+{
+  "name": "waldo-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.ts",
+  "scripts": {
+    "start": "node src/main.ts",
+    "dev": "nodemon src/main.ts",
+    "debug": "nodemon --inspect src/main.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JunDevl/odin-wheres-waldo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/JunDevl/odin-wheres-waldo/issues"
+  },
+  "homepage": "https://github.com/JunDevl/odin-wheres-waldo#readme",
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/express-validator": "^2.20.33",
+    "@types/node": "^26.1.1",
+    "nodemon": "^3.1.14",
+    "prisma": "^7.8.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@packages/utils": "*",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.2"
+  }
+}

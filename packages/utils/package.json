@@ -1,0 +1,17 @@
+{
+  "name": "@packages/utils",
+  "version": "1.0.0",
+  "description": "",
+  "main": "utils.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JunDevl/odin-wheres-waldo.git"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^25.6.0"
+  }
+}
