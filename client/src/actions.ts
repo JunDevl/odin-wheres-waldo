@@ -14,25 +14,38 @@ export const getImage = async () => {
   return buffer;
 }
 
-export const guessImage = async (targetPixel: number) => {
+export const initGame = async () => {
+  const fetchInit = await fetch(`${import.meta.env["VITE_API_URI"]!}/game/init`);
+
+  if (!fetchInit.ok) throw new Error(await fetchInit.json());
+
+  const { init }: { init: string } = await fetchInit.json();
+  localStorage.setItem("sessionTimestamp", init);
+
+
+  return init;
+}
+
+export const guessImage = async (x: number, y: number, name: string) => {
   const guess = await fetch(`${import.meta.env["VITE_API_URI"]!}/image/guess`, {
     headers: HEADERS,
     method: "POST",
     body: JSON.stringify({
-      init: localStorage.getItem("initTimestamp"),
-      target: targetPixel
+      init: localStorage.getItem("sessionTimestamp"),
+      targetPixel: { x, y },
+      characterName: name
     })
   })
 
   if (!guess.ok) throw new Error(await guess.json());
 
-  const response: { init: string | null, finished: string | null } = await guess.json();
+  const response: { init: string, finished?: string, sessionFinished?: string } = await guess.json();
 
   return response;
 }
 
 export const getUsersScores = async () => {
-  const fetchedScores = await fetch(`${import.meta.env["VITE_API_URI"]!}/scores`);
+  const fetchedScores = await fetch(`${import.meta.env["VITE_API_URI"]!}/players/scores`);
 
   if (!fetchedScores.ok) throw new Error(await fetchedScores.json());
 
@@ -42,10 +55,13 @@ export const getUsersScores = async () => {
 }
 
 export const setUserScore = async (username: string) => {
-  const user = await fetch(`${import.meta.env["VITE_API_URI"]!}/scores/${username}`, {
+  const user = await fetch(`${import.meta.env["VITE_API_URI"]!}/players/scores`, {
     headers: HEADERS,
     method: "POST",
-    body: JSON.stringify({ init: localStorage.getItem("initTimestamp") })
+    body: JSON.stringify({ 
+      init: localStorage.getItem("sessionTimestamp"),
+      username
+    })
   })
 
   if (!user.ok) throw new Error(await user.json());

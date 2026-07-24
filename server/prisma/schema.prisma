@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Player {
+  name         String @id
+  scoreSeconds Int
+}
+
+model TimedSession {
+  initialTime DateTime         @id @default(now())
+  guesses     CharacterGuess[]
+}
+
+model CharacterGuess {
+  initialSessionTime          TimedSession   @relation(fields: [timedSessionInitialTime], references: [initialTime])
+  finalTime                   DateTime       @id @default(now())
+  character                   ImageCharacter @relation(fields: [imageCharacterImagePath, imageCharacterCharacterName], references: [imagePath, characterName])
+  imageCharacterImagePath     String
+  imageCharacterCharacterName String
+  timedSessionInitialTime     DateTime
+}
+
+model ImageCharacter {
+  imagePath        String
+  characterName    String
+  xPos             Int
+  yPos             Int
+  width            Int
+  height           Int
+  characterGuesses CharacterGuess[]
+
+  @@id([imagePath, characterName])
+}
