@@ -2,8 +2,10 @@ import express, { Router } from "express";
 import type { RequestHandler } from "express";
 import cors from "cors";
 import { body, matchedData, validationResult, type ValidationChain } from "express-validator";
-import { readFileSync } from "node:fs";
+import fs from "node:fs";
 import prisma from "../lib/prisma.ts";
+import { ZipArchive } from "archiver";
+import path from "node:path";
 
 const PORT = 3000;
 
@@ -19,19 +21,43 @@ const apiRouter = Router();
 
 app.use("/api", apiRouter);
 
-apiRouter.get("/game/init", async (_, res) => {
-  const { initialTime } = await prisma.timedSession.create({});
+apiRouter.get("/game/init", async (_, res, next) => {
+  // const { initialTime } = await prisma.timedSession.create({});
 
-  res.json({ init: initialTime })
+  // res.json({ init: initialTime })
+
+  return next();
 })
 
-apiRouter.get("/image", (req, res, next) => {
-  return next();
+apiRouter.get("/images", (req, res, next) => {
+  // Set headers so the browser knows a ZIP file is coming
+  res.attachment('images.zip');
+  res.setHeader('Content-Type', 'application/zip');
+
+  const archive = new ZipArchive({ zlib: { level: 5 } });
+
+  // Pipe the archive data directly into the HTTP response stream
+  archive.pipe(res);
+
+  // Array of image paths you want to send
+  const imagePaths = fs.readdirSync("public");
+
+  // Append files to the archive
+  for (const [i, imagePath] of Object.entries(imagePaths)) {
+    const publicPath = path.join("public", imagePath)
+
+    if (!fs.existsSync(publicPath)) continue;
+
+    archive.file(publicPath, { name: `image_${i + 1}.png` });
+  }
+
+  // Finalize the archive (closes the stream when done)
+  archive.finalize();
 })
 
 const GUESS_PIXEL_THRESHOLD = 30;
 
-apiRouter.post("/image/guess", [
+apiRouter.post("/images/:imageName/guess", [
   body("init").isDate().notEmpty(), 
   body("targetPixel.*").isNumeric().notEmpty(),
   body("characterName").trim().notEmpty(),

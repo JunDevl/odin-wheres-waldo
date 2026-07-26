@@ -1,17 +1,39 @@
+import JSZip from "jszip";
+
 const HEADERS: HeadersInit = {
   'content-type': "application/json"
 }
 
-export const getImage = async () => {
-  const fetchedImages = await fetch(`${import.meta.env["VITE_API_URI"]!}/image`)
+export const getImages = async () => {
+  try {
+    const fetchedZippedImages = await fetch(`${import.meta.env["VITE_API_URI"]!}/images`)
 
-  if (!fetchedImages.ok) throw new Error(await fetchedImages.json());
+    if (!fetchedZippedImages.ok) throw new Error(await fetchedZippedImages.json());
 
-  const images = await fetchedImages.blob();
+    const zippedImages = await fetchedZippedImages.blob();
 
-  const buffer = await images.arrayBuffer();
+    const url = URL.createObjectURL(zippedImages);
 
-  return buffer;
+    const zip = await JSZip.loadAsync(zippedImages);
+    const images: Blob[] = [];
+
+    for (const filename of Object.keys(zip.files)) {
+      const file = zip.files[filename];
+      
+      // Skip directories if any exist
+      if (file.dir) continue;
+
+      // Extract the raw file data as an individual image Blob
+      const imageBlob = await file.async("blob");
+      
+      images.push(imageBlob);
+    }
+
+    return images;
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
 }
 
 export const initGame = async () => {

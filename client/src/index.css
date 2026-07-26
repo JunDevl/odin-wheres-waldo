@@ -1,27 +1,27 @@
 :root {
-  --hue: 15;
+  --hue: 125;
 
   --semantic-error: oklch(60% 0.3 15);
 
-  --dark-1: oklch(10% 0.02 15);
-  --dark-2: oklch(20% 0.01 15);
-  --dark-3: oklch(26% 0.004 15);
-  --dark-4: oklch(32% 0.004 15);
+  --dark-1: oklch(10% 0.017 125);
+  --dark-2: oklch(20% 0.012 125);
+  --dark-3: oklch(26% 0.010 125);
+  --dark-4: oklch(32% 0.005 125);
 
-  --medium-1: oklch(52% 0.02 15);
-  --medium-2: oklch(46%, 0.015, 15);
-  --medium-3: oklch(53%, 0.01, 15);
+  --medium-1: oklch(52% 0.04 125);
+  --medium-2: oklch(46%, 0.02, 125);
+  --medium-3: oklch(53%, 0.015, 125);
 
-  --white-1: oklch(96%, 0.01, 15);
-  --white-2: oklch(93%, 0.012, 15);
-  --white-3: oklch(90%, 0.015, 15);
+  --white-1: oklch(96%, 0.01, 125);
+  --white-2: oklch(93%, 0.012, 125);
+  --white-3: oklch(90%, 0.015, 125);
 
   --accent: oklch(63% 0.23 15);
 
   font: 18px/145% system-ui, 'Segoe UI', Roboto, sans-serif;
   letter-spacing: 0.18px;
   color-scheme: light dark;
-  color: oklch(51% 0.03 15);
+  color: oklch(51% 0.01 125);
   background-color: var(--white-1);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -31,21 +31,31 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    color: oklch(87% 0.015 15);
+    color: oklch(87% 0.015 125);
     background-color: var(--dark-2);
+  }
+
+  #root {
+    background-color: var(--dark-3);
   }
 }
 
 body {
   margin: 0;
   padding: 0;
+  min-height: 100dvh;
+  display: flex;
 }
 
 #root {
-  min-height: 100dvh;
+  flex: 1;
   box-sizing: border-box;
-  width: 100%;
-  height: 100%;
+  margin: 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 h1,
@@ -117,4 +127,47 @@ textarea:focus {
 svg {
   width: auto;
   height: auto;
+}
+
+#home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &>main {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
+}
+
+#image_list {
+  padding: 0.5rem;
+  justify-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-inline: 5rem;
+  /* background-color: aqua; */
+  justify-content: start;
+  align-items: stretch;
+}
+
+.selectable_image {
+  min-width: 25rem;
+  max-width: 25rem;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--dark-4);
+  border-radius: 1rem;
+  overflow: hidden;
+
+  &>img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
 }

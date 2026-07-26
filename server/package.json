@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/JunDevl/odin-wheres-waldo#readme",
   "devDependencies": {
+    "@types/archiver": "^8.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/express-validator": "^2.20.33",
@@ -33,6 +34,7 @@
     "@packages/utils": "*",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "archiver": "^8.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
