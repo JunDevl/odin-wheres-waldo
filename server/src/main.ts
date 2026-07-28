@@ -43,21 +43,21 @@ apiRouter.get("/images", (req, res, next) => {
   const imagePaths = fs.readdirSync("public");
 
   // Append files to the archive
-  for (const [i, imagePath] of Object.entries(imagePaths)) {
+  for (const imagePath of imagePaths) {
     const publicPath = path.join("public", imagePath)
 
     if (!fs.existsSync(publicPath)) continue;
 
-    archive.file(publicPath, { name: `image_${i + 1}.png` });
+    archive.file(publicPath, { name: imagePath });
   }
 
   // Finalize the archive (closes the stream when done)
   archive.finalize();
 })
 
-const GUESS_PIXEL_THRESHOLD = 30;
+const GUESS_PIXEL_THRESHOLD = 30; // should be put in a .env file, but i'm putting it here to prevent future mess ups of mine.
 
-apiRouter.post("/images/:imageName/guess", [
+apiRouter.post("/images/:imagePath/guess", [
   body("init").isDate().notEmpty(), 
   body("targetPixel.*").isNumeric().notEmpty(),
   body("characterName").trim().notEmpty(),
@@ -119,6 +119,10 @@ apiRouter.post("/images/:imageName/guess", [
 
   res.json({ init: sessionInit, finished: characterGuess.finalTime });
 }) as RequestHandler))
+
+apiRouter.get("/images/margin", (_, res) => {
+  res.send(GUESS_PIXEL_THRESHOLD);
+})
 
 apiRouter.get("/players/scores", async (req, res, next) => {
   const scores = await prisma.player.findMany({

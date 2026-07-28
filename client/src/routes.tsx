@@ -13,7 +13,7 @@ const routes: RouteObject[] = [
     element: <App/>
   },
   {
-    path: "/guess/:imageID",
+    path: "/guess/:imagePath",
     element: <ImageGuess/>
   },
   {

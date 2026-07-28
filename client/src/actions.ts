@@ -12,10 +12,8 @@ export const getImages = async () => {
 
     const zippedImages = await fetchedZippedImages.blob();
 
-    const url = URL.createObjectURL(zippedImages);
-
     const zip = await JSZip.loadAsync(zippedImages);
-    const images: Blob[] = [];
+    const images: {name: string, blob: Blob}[] = [];
 
     for (const filename of Object.keys(zip.files)) {
       const file = zip.files[filename];
@@ -26,7 +24,7 @@ export const getImages = async () => {
       // Extract the raw file data as an individual image Blob
       const imageBlob = await file.async("blob");
       
-      images.push(imageBlob);
+      images.push({name: filename, blob: imageBlob});
     }
 
     return images;
@@ -48,14 +46,14 @@ export const initGame = async () => {
   return init;
 }
 
-export const guessImage = async (x: number, y: number, name: string) => {
-  const guess = await fetch(`${import.meta.env["VITE_API_URI"]!}/image/guess`, {
+export const guessImage = async (imagePath: string, x: number, y: number, characterName: string) => {
+  const guess = await fetch(`${import.meta.env["VITE_API_URI"]!}/images/${imagePath}/guess`, {
     headers: HEADERS,
     method: "POST",
     body: JSON.stringify({
       init: localStorage.getItem("sessionTimestamp"),
       targetPixel: { x, y },
-      characterName: name
+      characterName
     })
   })
 
@@ -91,4 +89,14 @@ export const setUserScore = async (username: string) => {
   const response = user.text();
 
   return response;
+}
+
+export const getPixelMargin = async () => {
+  const fetchedMargin = await fetch(`${import.meta.env["VITE_API_URI"]!}/images/margin`);
+
+  if (!fetchedMargin.ok) throw new Error(await fetchedMargin.json());
+
+  const margin = Number(await fetchedMargin.text());
+  
+  return margin;
 }

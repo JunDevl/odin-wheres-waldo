@@ -152,9 +152,10 @@ svg {
   /* background-color: aqua; */
   justify-content: start;
   align-items: stretch;
+  list-style: none;
 }
 
-.selectable_image {
+.selectable_image>a {
   min-width: 25rem;
   max-width: 25rem;
   aspect-ratio: 1/1;
@@ -164,10 +165,17 @@ svg {
   background-color: var(--dark-4);
   border-radius: 1rem;
   overflow: hidden;
+  transition: all 200ms;
 
   &>img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+  }
+
+  &:hover {
+    scale: 1.05;
+    background-color: oklch(from var(--dark-4) calc(l*1.2) c h);
+    cursor: pointer;
   }
 }
