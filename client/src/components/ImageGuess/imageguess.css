@@ -1,5 +1,7 @@
 #image {
   display: flex;
+  position: relative;
+  --margin: 30px;
 
   &>img {
     flex: 1;
@@ -12,4 +14,21 @@
 #root {
   display: flex;
   padding: 1rem;
+}
+
+#selection {
+  display: hidden;
+  pointer-events: none;
+}
+
+.show_selection>#selection {
+  display: inline;
+  position: absolute;
+  position: absolute;
+  width: calc(var(--margin) * 2);
+  height: calc(var(--margin) * 2);
+  background-color: red;
+  opacity: 0.3;
+  top: 0px;
+  left: 0px;
 }

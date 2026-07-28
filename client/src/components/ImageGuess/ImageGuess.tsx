@@ -24,18 +24,22 @@ const ImageGuess = (props: Props) => {
 
   const image = images.find(image => image.name === params.imagePath)!;
 
-  const [selected, setSelected] = useState<{x: number | null, y: number | null, character: string | null}>({
+  const [selected, setSelected] = useState<{
+    x: number | null, 
+    y: number | null, 
+    character: string | null
+  }>({
     x: null,
     y: null,
     character: null
   })
 
   const handleClick = async (e: MouseEvent<HTMLImageElement, globalThis.MouseEvent>) => {
-    const { 
+    const {
       x: imgElementX,
       y: imgElementY,
-      width: imgElementWidth, 
-      height: imgElementHeight 
+      width: imgElementWidth,
+      height: imgElementHeight
     } = imageElement.current?.getBoundingClientRect()!;
 
     const elementSelectionPos = {
@@ -57,17 +61,27 @@ const ImageGuess = (props: Props) => {
       character: null
     })
 
+    const parentDiv = imageElement.current?.parentElement as HTMLDivElement;
+
+    parentDiv.classList.add("show_selection");
+
+    const selectonElement = document.querySelector("#selection")! as HTMLDivElement;
+
+    selectonElement.style.left = `${elementSelectionPos.x - margin}px`;
+    selectonElement.style.top = `${elementSelectionPos.y - margin}px`;
+
     // const guess = await guessImage(normalizedSelectionPos.x, normalizedSelectionPos.y, params.imagePath!)
   }
 
   return (
-    <div id="image">
+    <div id="image" className="show_selection">
       <Suspense fallback={<p>Loading ...</p>}>
         <img 
           src={URL.createObjectURL(image.blob)}
           onClick={handleClick}
           ref={imageElement}
         />
+        <div id="selection"></div>
       </Suspense>
     </div>
   )
