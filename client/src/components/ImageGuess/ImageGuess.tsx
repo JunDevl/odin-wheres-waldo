@@ -65,10 +65,18 @@ const ImageGuess = (props: Props) => {
 
     parentDiv.classList.add("show_selection");
 
-    const selectonElement = document.querySelector("#selection")! as HTMLDivElement;
+    const selectionElement = document.querySelector("#selection")! as HTMLDivElement;
 
-    selectonElement.style.left = `${elementSelectionPos.x - margin}px`;
-    selectonElement.style.top = `${elementSelectionPos.y - margin}px`;
+    const marginRatio = (imgElementWidth * imgElementHeight) / (imageElement.current?.naturalWidth! * imageElement.current?.naturalHeight!);
+
+    const normalizedMargin = margin * marginRatio;
+
+    const imageContainer = document.querySelector("#image") as HTMLDivElement;
+
+    imageContainer.style.setProperty("--margin-of-error", `${normalizedMargin}px`);
+
+    selectionElement.style.left = `${elementSelectionPos.x - normalizedMargin}px`;
+    selectionElement.style.top = `${elementSelectionPos.y - normalizedMargin}px`;
 
     // const guess = await guessImage(normalizedSelectionPos.x, normalizedSelectionPos.y, params.imagePath!)
   }
@@ -81,7 +89,7 @@ const ImageGuess = (props: Props) => {
           onClick={handleClick}
           ref={imageElement}
         />
-        <div id="selection"></div>
+        <div id="selection" hidden={!!selected.x || !!selected.y}></div>
       </Suspense>
     </div>
   )

@@ -1,13 +1,15 @@
 #image {
   display: flex;
   position: relative;
-  --margin: 30px;
+  overflow: scroll;
+  flex: 1 0;
+  --margin-of-error: 30px;
 
   &>img {
-    flex: 1;
+    flex: 1 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
   }
 }
 
@@ -25,10 +27,14 @@
   display: inline;
   position: absolute;
   position: absolute;
-  width: calc(var(--margin) * 2);
-  height: calc(var(--margin) * 2);
+  width: calc(var(--margin-of-error) * 2);
+  height: calc(var(--margin-of-error) * 2);
   background-color: red;
   opacity: 0.3;
   top: 0px;
   left: 0px;
+}
+
+#root {
+  overflow: scroll;
 }
