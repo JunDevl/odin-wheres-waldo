@@ -22,9 +22,9 @@ const apiRouter = Router();
 app.use("/api", apiRouter);
 
 apiRouter.get("/game/init", async (_, res, next) => {
-  // const { initialTime } = await prisma.timedSession.create({});
+  const { initialTime } = await prisma.timedSession.create({});
 
-  // res.json({ init: initialTime })
+  res.json({ init: initialTime })
 
   return next();
 })
@@ -58,7 +58,7 @@ apiRouter.get("/images", (req, res, next) => {
 const GUESS_PIXEL_THRESHOLD = 30; // should be put in a .env file, but i'm putting it here to prevent future mess ups of mine.
 
 apiRouter.post("/images/:imagePath/guess", [
-  body("init").isDate().notEmpty(), 
+  body("init").isISO8601().notEmpty(), 
   body("targetPixel.*").isNumeric().notEmpty(),
   body("characterName").trim().notEmpty(),
 ], ((async (req, res) => {
@@ -67,18 +67,7 @@ apiRouter.post("/images/:imagePath/guess", [
   if (!validationErrors.isEmpty()) return res.status(400).json(validationErrors.array());
 
   const sessionInit = req.body.init;
-
-  const targetX: number = req.body.targetPixel.x;
-  const targetY: number = req.body.targetPixel.y;
-
   const characterName: string = req.body.characterName;
-
-  const guess = {
-    x: targetX - GUESS_PIXEL_THRESHOLD,
-    y: targetY - GUESS_PIXEL_THRESHOLD,
-    width: targetX + GUESS_PIXEL_THRESHOLD,
-    height: targetY + GUESS_PIXEL_THRESHOLD
-  }
 
   const character = await prisma.imageCharacter.findFirst({
     where: { characterName }
@@ -86,9 +75,32 @@ apiRouter.post("/images/:imagePath/guess", [
 
   if (!character) return res.sendStatus(404);
 
+  const guessExists = await prisma.characterGuess.findFirst({
+    where: {
+      initialSessionTime: sessionInit,
+      imageCharacterCharacterName: character.characterName,
+      imageCharacterImagePath: character.imagePath
+    }
+  })
+
+  if (guessExists) return res.sendStatus(404);
+
+  const targetX: number = req.body.targetPixel.x;
+  const targetY: number = req.body.targetPixel.y;
+
+  const guess = {
+    x: targetX - GUESS_PIXEL_THRESHOLD,
+    y: targetY - GUESS_PIXEL_THRESHOLD,
+    width: (targetX + GUESS_PIXEL_THRESHOLD) - targetX,
+    height: (targetY + GUESS_PIXEL_THRESHOLD) - targetY
+  }
+
+  if (!character) return res.sendStatus(404);
+
   const { xPos, yPos, width, height } = character;
 
-  if (!(xPos >= guess.x && yPos >= guess.y && width <= guess.width && height <= guess.height)) 
+  if ((guess.x >= xPos && guess.y >= yPos) &&
+      (guess.x + guess.width >= xPos + width && guess.y + guess.height >= yPos)) 
     return res.json({ init: sessionInit });
 
   const characterGuess = await prisma.characterGuess.create({

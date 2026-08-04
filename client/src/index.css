@@ -129,6 +129,11 @@ svg {
   height: auto;
 }
 
+ol,
+ul {
+  list-style: none;
+}
+
 #home {
   display: flex;
   flex-direction: column;

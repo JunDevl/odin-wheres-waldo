@@ -42,7 +42,6 @@ export const initGame = async () => {
   const { init }: { init: string } = await fetchInit.json();
   localStorage.setItem("sessionTimestamp", init);
 
-
   return init;
 }
 

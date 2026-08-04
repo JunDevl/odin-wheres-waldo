@@ -1,13 +1,24 @@
 import "./imageguess.css"
 
 import { useParams } from "react-router";
-import { getImages, getPixelMargin, guessImage } from "../../actions";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Suspense, useRef, useState, type MouseEvent } from "react";
+import { getImages, getPixelMargin, guessImage, initGame } from "../../actions";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { Suspense, useEffect, useRef, useState, type MouseEvent, type SubmitEvent } from "react";
+
+const characters = ["Waldo", "Wizard", "Wilma"]
 
 type Props = {}
 
 const ImageGuess = (props: Props) => {
+  const { data: init } = useQuery({
+    queryKey: ["init"],
+    queryFn: async () => {
+      const init = localStorage.getItem("sessionTimestamp") ?? await initGame();
+
+      return init;
+    }
+  })
+
   const { data: images } = useSuspenseQuery({
     queryKey: ["images"],
     queryFn: () => getImages()
@@ -77,8 +88,12 @@ const ImageGuess = (props: Props) => {
 
     selectionElement.style.left = `${elementSelectionPos.x - normalizedMargin}px`;
     selectionElement.style.top = `${elementSelectionPos.y - normalizedMargin}px`;
+  }
 
-    // const guess = await guessImage(normalizedSelectionPos.x, normalizedSelectionPos.y, params.imagePath!)
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const guess = await guessImage(params.imagePath!, selected.x!, selected.y!, selected.character!)
   }
 
   return (
@@ -89,7 +104,32 @@ const ImageGuess = (props: Props) => {
           onClick={handleClick}
           ref={imageElement}
         />
-        <div id="selection" hidden={!!selected.x || !!selected.y}></div>
+        <div id="selection" hidden={!selected.x || !selected.y}></div>
+        <div id="menu" className={!selected.x || !selected.y ? "" : "show"}>
+          <h3>Select the character:</h3>
+          <ul id="characters">
+            {characters.map(character => 
+              <li 
+                className={`character${selected.character === character ? " selected" : ""}`} 
+                key={character} 
+                onClick={() => setSelected(s => ({...s, character}))}
+                id={character}
+              >
+                {character}
+              </li>)
+            }
+          </ul>
+          <form onSubmit={handleSubmit} className="buttons">
+            <button className="guess" type="submit">Guess</button>
+            <button 
+              className="cancel" 
+              type="reset" 
+              onClick={() => setSelected({x: null, y: null, character: null})}
+            >
+              Cancel
+            </button>
+          </form>
+        </div>
       </Suspense>
     </div>
   )

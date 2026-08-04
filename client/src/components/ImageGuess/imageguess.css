@@ -16,6 +16,7 @@
 #root {
   display: flex;
   padding: 1rem;
+  overflow: scroll;
 }
 
 #selection {
@@ -23,9 +24,8 @@
   pointer-events: none;
 }
 
-.show_selection>#selection {
+.show_selection>#selection:not([hidden]) {
   display: inline;
-  position: absolute;
   position: absolute;
   width: calc(var(--margin-of-error) * 2);
   height: calc(var(--margin-of-error) * 2);
@@ -35,6 +35,54 @@
   left: 0px;
 }
 
-#root {
-  overflow: scroll;
+#menu {
+  display: flex;
+  visibility: hidden;
+  position: absolute;
+  right: 0;
+  width: 0rem;
+  transition: all 500ms;
+  background-color: var(--dark-2);
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  &.show {
+    display: flex;
+    visibility: visible;
+    width: 20rem;
+  }
+
+  &>h3 {
+    white-space: nowrap;
+  }
+
+  & .buttons,
+  & #characters {
+    display: flex;
+  }
+
+  &>#characters {
+    padding: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+
+    &>.character {
+      padding: 0.5rem 2rem;
+      flex: 1;
+      transition: all 400ms;
+      border-radius: 10px;
+
+      &:hover {
+        background-color: var(--medium-1);
+      }
+
+      &.selected {
+        background: var(--accent);
+      }
+    }
+  }
 }
